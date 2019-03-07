@@ -20,6 +20,13 @@ from objects import glob
 from helpers import chatHelper as chat
 from common.web import cheesegull
 
+from dhooks import Webhook, Embed
+from constants import userRanks
+from helpers import packetHelper
+from constants import packetIDs
+from constants import dataTypes
+
+from constants.configHelper import config 
 
 def bloodcatMessage(beatmapID):
 	beatmap = glob.db.fetch("SELECT song_name, beatmapset_id FROM beatmaps WHERE beatmap_id = %s LIMIT 1", [beatmapID])
@@ -222,12 +229,19 @@ def ban(fro, chan, message):
 	for i in message:
 		i = i.lower()
 	target = message[0]
+	reason = ' '.join(message[1:])
 
 	# Make sure the user exists
 	targetUserID = userUtils.getIDSafe(target)
 	userID = userUtils.getID(fro)
 	if not targetUserID:
 		return "{}: user not found".format(target)
+
+	if targetUserID < 1002 and userID > 1002:
+		return "Nice try."
+		
+	if not reason:
+		return "Please specify a reason for the ban."
 
 	# Set allowed to 0
 	userUtils.ban(targetUserID)
@@ -263,12 +277,21 @@ def restrict(fro, chan, message):
 	for i in message:
 		i = i.lower()
 	target = message[0]
+	reason = ' '.join(message[1:])
 
 	# Make sure the user exists
 	targetUserID = userUtils.getIDSafe(target)
+	username = chat.fixUsernameForBancho(fro)
 	userID = userUtils.getID(fro)
 	if not targetUserID:
 		return "{}: user not found".format(target)
+
+	if targetUserID < 1002 and userID > 1002:
+		log.enjuu("{} attempted to restrict immortal user {}.".format(username, targetUserID), discord="cm")
+		return "Nice try."
+		
+	if not reason:
+			reason = "not avialable"
 
 	# Put this user in restricted mode
 	userUtils.restrict(targetUserID)
@@ -278,8 +301,46 @@ def restrict(fro, chan, message):
 	if targetToken is not None:
 		targetToken.setRestricted()
 
-	log.rap(userID, "has put {} in restricted mode".format(target), True)
-	return "Bye bye {}. See you later, maybe.".format(target)
+	log.rap(userID, "has restricted {} ({}) for: {}".format(target, targetUserID, reason), True)
+	
+	hook = Webhook(glob.conf.config["discord"]["webhook"])
+
+	embed = Embed(
+		description='',
+		color=0x1e0f3,
+		timestamp='now'  # sets the timestamp to current time
+    )
+
+	avatar = "https://a.enjuu.click/"
+
+	embed.set_author(name='Restriction', icon_url="https://a.enjuu.click/{}".format(targetUserID))
+	embed.add_field(name='Username', value="{}".format(target))
+	embed.add_field(name='Reason', value="{}".format(reason))
+	embed.set_footer(text="Restricted by {}".format(username))
+
+	embed.set_thumbnail("https://a.enjuu.click/{}".format(targetUserID))
+
+	hook.send(embed=embed)
+	
+	return "{} has been restricted for {}".format(target, reason)
+
+def kill(fro, chan, message):
+	for i in message:
+		i = i.lower()
+	target = message[0]
+	
+	targetUserID = userUtils.getIDSafe(target)
+	userID = userUtils.getID(fro)
+	if not targetUserID:
+		return "{}: user not found".format(target)
+
+	targetToken = glob.tokens.getTokenFromUserId(userID)
+		
+	targetToken.enqueue(userSupporterGMT(True, False, False))
+	targetToken.enqueue(userSupporterGMT(False, True, False))
+	targetToken.enqueue(serverPackets.kill(target))
+	
+	return "{} has been killed".format(target)
 
 def unrestrict(fro, chan, message):
 	# Get parameters
@@ -518,9 +579,8 @@ def tillerinoMods(fro, chan, message):
 		modsList = [message[0][i:i+2].upper() for i in range(0, len(message[0]), 2)]
 		modsEnum = 0
 		for i in modsList:
-			if i not in ["NO", "NF", "EZ", "HD", "HR", "DT", "HT", "NC", "FL", "SO"]:
-				return "Invalid mods. Allowed mods: NO, NF, EZ, HD, HR, DT, HT, NC, FL, SO. Do not use spaces for multiple mods."
-			if i == "NO":
+			if i not in ["NO", "NF", "EZ", "HD", "HR", "DT", "HT", "NC", "FL", "SO", "RX", "AP"]:
+				return "Invalid mods. Allowed mods: NO, NF, EZ, HD, HR, DT, HT, NC, FL, SO, RX, AP. Do not use spaces for multiple mods."			if i == "NO":
 				modsEnum = 0
 				break
 			elif i == "NF":
@@ -541,6 +601,10 @@ def tillerinoMods(fro, chan, message):
 				modsEnum += mods.FLASHLIGHT
 			elif i == "SO":
 				modsEnum += mods.SPUNOUT
+			elif i == "RX":
+				modsEnum += mods.RELAX
+			elif i == "AP":
+				modsEnum += mods.RELAX2
 
 		# Set mods
 		token.tillerino[1] = modsEnum
@@ -1353,12 +1417,12 @@ commands = [
 	}, {
 		"trigger": "!bloodcat",
 		"callback": bloodcat
+	}, {
+		"trigger": "!kill",
+		"privileges": privileges.ADMIN_MANAGE_USERS,
+		"syntax": "<username>",
+		"callback": kill
 	}
-	#
-	#	"trigger": "!acc",
-	#	"callback": tillerinoAcc,
-	#	"syntax": "<accuarcy>"
-	#}
 ]
 
 # Commands list default values

@@ -40,6 +40,7 @@ from pubSubHandlers import changeUsernameHandler
 
 from pubSubHandlers import disconnectHandler
 from pubSubHandlers import banHandler
+from pubSubHandlers import createClanHandler
 from pubSubHandlers import notificationHandler
 from pubSubHandlers import updateSilenceHandler
 from pubSubHandlers import updateStatsHandler

@@ -62,6 +62,7 @@ class config:
 			self.config.get("discord","enable")
 			self.config.get("discord","boturl")
 			self.config.get("discord","devgroup")
+			self.config.get("discord","webhook")
 
 			self.config.get("datadog", "enable")
 			self.config.get("datadog", "apikey")
@@ -127,6 +128,7 @@ class config:
 		self.config.set("discord", "enable", "0")
 		self.config.set("discord", "boturl", "")
 		self.config.set("discord", "devgroup", "")
+		self.config.set("discord", "webhook", "")
 
 		self.config.add_section("datadog")
 		self.config.set("datadog", "enable", "0")

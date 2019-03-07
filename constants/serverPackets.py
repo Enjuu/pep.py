@@ -77,6 +77,9 @@ def onlineUsers():
 def userLogout(userID):
 	return packetHelper.buildPacket(packetIDs.server_userLogout, [[userID, dataTypes.SINT32], [0, dataTypes.BYTE]])
 
+def kill(userID):
+	return packetHelper.buildPacket(packetIDs.client_BanchoPing, [[dataTypes.BYTE]])
+
 def userPanel(userID, force = False):
 	# Connected and restricted check
 	userToken = glob.tokens.getTokenFromUserID(userID)
