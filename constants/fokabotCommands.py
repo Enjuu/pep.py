@@ -336,8 +336,8 @@ def kill(fro, chan, message):
 
 	targetToken = glob.tokens.getTokenFromUserId(userID)
 		
-	targetToken.enqueue(userSupporterGMT(True, False, False))
-	targetToken.enqueue(userSupporterGMT(False, True, False))
+	targetToken.enqueue(serverPackets.userSupporterGMT(True, False, False))
+	targetToken.enqueue(serverPackets.userSupporterGMT(False, True, False))
 	targetToken.enqueue(serverPackets.kill(target))
 	
 	return "{} has been killed".format(target)
