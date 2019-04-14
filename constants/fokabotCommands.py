@@ -334,7 +334,7 @@ def kill(fro, chan, message):
 	if not targetUserID:
 		return "{}: user not found".format(target)
 
-	targetToken = glob.tokens.getTokenFromUserId(userID)
+	targetToken = glob.tokens.getTokenFromUserID(userID)
 		
 	targetToken.enqueue(userSupporterGMT(True, False, False))
 	targetToken.enqueue(userSupporterGMT(False, True, False))
