@@ -25,6 +25,7 @@ from constants import userRanks
 from helpers import packetHelper
 from constants import packetIDs
 from constants import dataTypes
+from common.constants import actions
 
 from constants.configHelper import config 
 
