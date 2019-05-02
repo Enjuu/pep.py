@@ -1264,6 +1264,51 @@ def bloodcat(fro, chan, message):
 		beatmapID = spectatorHostToken.beatmapID
 	return bloodcatMessage(beatmapID)
 
+def parse_status(status_text):
+    if status_text.lower() == "idle":        return actions.IDLE
+    if status_text.lower() == "afk":        return actions.AFK
+    if status_text.lower() == "playing":        return actions.PLAYING
+    if status_text.lower() == "editing":        return actions.EDITING
+    if status_text.lower() == "modding":        return actions.MODDING
+    if status_text.lower() == "multiplayer":    return actions.MULTIPLAYER
+    if status_text.lower() == "watching":        return actions.WATCHING
+    if status_text.lower() == "unknown":        return actions.UNKNOWN
+    if status_text.lower() == "testing":        return actions.TESTING
+    if status_text.lower() == "submitting":        return actions.SUBMITTING
+    if status_text.lower() == "paused":        return actions.PAUSED
+    if status_text.lower() == "lobby":        return actions.LOBBY
+    if status_text.lower() == "multiplaying":    return actions.MULTIPLAYING
+    if status_text.lower() == "direct":        return actions.OSU_DIRECT
+    else:                        return actions.NONE
+
+def fokabot_status_change(fro, chan, message):
+    if len(message) < 2:
+        return "Usage: !bot_status <status> <status_text>"
+
+    botToken = glob.tokens.getTokenFromUserID(999)
+
+    if botToken == None:
+        return "Bot is not connected! (use !bot reconnect)"
+
+    botToken.actionID = parse_status(str(message[0]))
+    botToken.actionText = " ".join(message[1:])
+
+    return "Changed Bot Message"
+
+def user_status_change(fro, chan, message):
+    if len(message) < 2:
+        return "Usage: !user_status <status> <status_text>"
+
+    userID = userUtils.getID(fro)
+    userToken = glob.tokens.getTokenFromUserID(userID)
+
+    if userToken == None:
+        return "User is not connected! (use !bot reconnect)"
+
+    userToken.actionID = parse_status(str(message[0]))
+    userToken.actionText = " ".join(message[1:])
+
+    return "Changed User Message"
 
 """
 Commands list
@@ -1422,6 +1467,16 @@ commands = [
 		"privileges": privileges.ADMIN_MANAGE_USERS,
 		"syntax": "<username>",
 		"callback": kill
+		}, {
+		"trigger": "!bot_status",
+		"privileges": privileges.ADMIN_MANAGE_USERS,
+		"syntax": "<action> <actiontext>",
+		"callback": fokabot_status_change
+	}, {
+		"trigger": "!user_status",
+		"privileges": privileges.ADMIN_MANAGE_USERS,
+		"syntax": "<action> <actiontext>",
+		"callback": user_status_change
 	}
 ]
 
