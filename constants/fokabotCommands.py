@@ -335,11 +335,11 @@ def kill(fro, chan, message):
 	if not targetUserID:
 		return "{}: user not found".format(target)
 
-	targetToken = glob.tokens.getTokenFromUserID(userID)
+	targetToken = glob.tokens.getTokenFromUserID(targetUserID)
 		
 	targetToken.enqueue(serverPackets.userSupporterGMT(True, False, False))
 	targetToken.enqueue(serverPackets.userSupporterGMT(False, True, False))
-	targetToken.enqueue(serverPackets.kill(target))
+	targetToken.enqueue(serverPackets.kill())
 	
 	return "{} has been killed".format(target)
 
