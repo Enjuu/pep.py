@@ -33,9 +33,8 @@ def bloodcatMessage(beatmapID):
 	beatmap = glob.db.fetch("SELECT song_name, beatmapset_id FROM beatmaps WHERE beatmap_id = %s LIMIT 1", [beatmapID])
 	if beatmap is None:
 		return "Sorry, I'm not able to provide a download link for this map :("
-	return "Download [https://bloodcat.com/osu/s/{} {}] from Bloodcat".format(
+	return "Download [https://chimu.moe/d/{}] from Chimu".format(
 		beatmap["beatmapset_id"],
-		beatmap["song_name"],
 	)
 
 """
