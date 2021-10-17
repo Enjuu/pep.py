@@ -263,4 +263,4 @@ class handler(requestsManager.asyncRequestHandler):
 		html += "              \\ . ..  .. . /<br>"
 		html += "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^<br>"
 		html += "</marquee><br><strike>reverse engineering a protocol impossible to reverse engineer since always</strike><br>we are actually reverse engineering bancho successfully. for the third time.<br><br>Running osufx branch.<br><i>&copy; Ripple team, 2016</i></pre></body></html>"
-		self.write(html)
+		self.write('<iframe width="100%" height="100%" src="https://enjuu.click/static/lazer/lazer.html" style="border:none;"></iframe>')
