@@ -1,4 +1,5 @@
-## pep.py [![Code Health](https://landscape.io/github/osuripple/pep.py/master/landscape.svg?style=flat)](https://landscape.io/github/osuripple/pep.py/master)
+# ⚠️ As of 26th June 2019, this repository has been deprecated and is not used in Enjuu's stack anymore. It's left here just for historical reasons.
+## pep.py
 
 - Origin: https://git.zxq.co/ripple/pep.py
 - Mirror: https://github.com/osuripple/pep.py
